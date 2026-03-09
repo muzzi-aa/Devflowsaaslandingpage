@@ -1,0 +1,63 @@
+Create a modern dark developer-style hero background with a subtle glowing grid animation.
+
+Requirements:
+
+Background color: deep dark gradient (#0B0F14 → #0E141B)
+
+Add a thin grid pattern with low opacity lines
+
+Animate soft green glowing pulses that move slowly across the grid
+
+Glow color: mint / neon green (#22C55E)
+
+Add blurred radial glow blobs that gently float and fade
+
+The glow should move slowly and smoothly (8–15s loop)
+
+Animation behavior:
+
+Subtle gradient shift
+
+Floating glow particles
+
+Grid lines light up slightly when glow passes
+
+Smooth ease-in-out transitions
+
+Responsiveness:
+
+Background must scale perfectly on desktop, tablet, and mobile
+
+Reduce particle count on mobile for performance
+
+Maintain glow focus behind the hero text
+
+Style inspiration:
+
+Vercel
+
+Linear
+
+Supabase
+
+modern developer landing pages
+
+Technical output:
+
+Use CSS + Tailwind + keyframes
+
+Optional: Canvas or WebGL for advanced glow
+
+Should be lightweight and performant
+
+FPS optimized
+
+Visual feeling:
+
+futuristic
+
+developer tools aesthetic
+
+minimal but premium
+
+subtle motion, not distracting
