@@ -1,261 +1,288 @@
-import { Search, Filter, File, Download, Trash2, Grid, List, SortAsc } from 'lucide-react';
 import { useState } from 'react';
+import { Search, Upload, Filter, Grid, List, File, MoreHorizontal, Download, Trash2, Eye, Tag, ChevronDown } from 'lucide-react';
+import { Link } from 'react-router';
 
-const allUploads = [
-  { id: 1, title: 'React Hooks Cheatsheet', type: 'PDF', date: 'Mar 8, 2026', size: '2.4 MB', tags: ['React', 'Frontend'] },
-  { id: 2, title: 'Algorithm Solutions', type: 'PDF', date: 'Mar 7, 2026', size: '1.8 MB', tags: ['Algorithms', 'DSA'] },
-  { id: 3, title: 'TypeScript Best Practices', type: 'PDF', date: 'Mar 6, 2026', size: '3.1 MB', tags: ['TypeScript', 'Best Practices'] },
-  { id: 4, title: 'Node.js Performance Tips', type: 'PDF', date: 'Mar 5, 2026', size: '2.2 MB', tags: ['Node.js', 'Backend'] },
-  { id: 5, title: 'CSS Grid Examples', type: 'PDF', date: 'Mar 4, 2026', size: '1.5 MB', tags: ['CSS', 'Frontend'] },
-  { id: 6, title: 'Docker Compose Guide', type: 'PDF', date: 'Mar 3, 2026', size: '2.8 MB', tags: ['Docker', 'DevOps'] },
-  { id: 7, title: 'REST API Design Patterns', type: 'PDF', date: 'Mar 2, 2026', size: '2.0 MB', tags: ['API', 'Backend'] },
-  { id: 8, title: 'Git Workflow Strategies', type: 'PDF', date: 'Mar 1, 2026', size: '1.2 MB', tags: ['Git', 'Version Control'] },
-];
+const E = { bright: '#10B981', light: '#34D399', mid: '#166534', dark: '#14532D' };
 
 const tagColorMap: Record<string, string> = {
-  React: '#60A5FA',
-  Frontend: '#F472B6',
-  Algorithms: '#4ADE80',
-  DSA: '#4ADE80',
-  TypeScript: '#A78BFA',
+  React:        '#60A5FA',
+  Frontend:     '#F472B6',
+  Algorithms:   E.bright,
+  DSA:          E.light,
+  TypeScript:   '#818CF8',
   'Best Practices': '#FBBF24',
-  'Node.js': '#34D399',
-  Backend: '#F97316',
-  CSS: '#F472B6',
-  Docker: '#60A5FA',
-  DevOps: '#94A3B8',
-  API: '#F97316',
-  Git: '#FB923C',
-  'Version Control': '#FB923C',
+  'Node.js':    '#FB923C',
+  Backend:      '#FB923C',
+  CSS:          '#F472B6',
+  Docker:       '#38BDF8',
+  DevOps:       '#38BDF8',
+  API:          '#A78BFA',
+  Git:          '#F97316',
+  'Version Control': '#F97316',
 };
 
+const allUploads = [
+  { id: 1, title: 'React Hooks Cheatsheet',   type: 'PDF', date: 'Mar 8, 2026', size: '2.4 MB', tags: ['React', 'Frontend'],          views: 142, emoji: '⚛️' },
+  { id: 2, title: 'Algorithm Solutions',       type: 'PDF', date: 'Mar 7, 2026', size: '1.8 MB', tags: ['Algorithms', 'DSA'],          views: 89,  emoji: '🧮' },
+  { id: 3, title: 'TypeScript Best Practices', type: 'PDF', date: 'Mar 6, 2026', size: '3.1 MB', tags: ['TypeScript', 'Best Practices'], views: 231, emoji: '📘' },
+  { id: 4, title: 'Node.js Performance Tips',  type: 'PDF', date: 'Mar 5, 2026', size: '2.2 MB', tags: ['Node.js', 'Backend'],          views: 67,  emoji: '⚡' },
+  { id: 5, title: 'CSS Grid Examples',         type: 'PDF', date: 'Mar 4, 2026', size: '1.5 MB', tags: ['CSS', 'Frontend'],             views: 110, emoji: '🎨' },
+  { id: 6, title: 'Docker Compose Guide',      type: 'PDF', date: 'Mar 3, 2026', size: '2.8 MB', tags: ['Docker', 'DevOps'],           views: 55,  emoji: '🐳' },
+  { id: 7, title: 'REST API Design Patterns',  type: 'PDF', date: 'Mar 2, 2026', size: '2.0 MB', tags: ['API', 'Backend'],             views: 198, emoji: '🔗' },
+  { id: 8, title: 'Git Workflow Strategies',   type: 'PDF', date: 'Mar 1, 2026', size: '1.2 MB', tags: ['Git', 'Version Control'],     views: 77,  emoji: '🌿' },
+];
+
+const allTags = Array.from(new Set(allUploads.flatMap(u => u.tags)));
+
 export default function MyUploads() {
-  const [query, setQuery] = useState('');
-  const [view, setView] = useState<'list' | 'grid'>('list');
-  const [uploads, setUploads] = useState(allUploads);
+  const [search, setSearch] = useState('');
+  const [view, setView] = useState<'grid' | 'list'>('grid');
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [searchFocus, setSearchFocus] = useState(false);
+  const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const [sortOpen, setSortOpen] = useState(false);
+  const [sort, setSort] = useState('Newest');
 
-  const filtered = uploads.filter(
-    (u) =>
-      u.title.toLowerCase().includes(query.toLowerCase()) ||
-      u.tags.some((t) => t.toLowerCase().includes(query.toLowerCase()))
-  );
-
-  const handleDelete = (id: number) => {
-    setUploads(uploads.filter((u) => u.id !== id));
-  };
+  const filtered = allUploads.filter(u => {
+    const matchSearch = u.title.toLowerCase().includes(search.toLowerCase());
+    const matchTag = selectedTag ? u.tags.includes(selectedTag) : true;
+    return matchSearch && matchTag;
+  });
 
   return (
-    <div className="max-w-5xl mx-auto">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-8">
+    <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+      {/* Page header */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28, flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h2 style={{ color: '#FFFFFF', fontWeight: 700, fontSize: '1.6rem' }}>My Uploads</h2>
-          <p className="mt-1 text-sm" style={{ color: '#9AA4B2' }}>
-            Manage all your documents and resources
-          </p>
+          <h1 style={{ color: '#F0FDF4', fontSize: 24, fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 6 }}>My Uploads</h1>
+          <p style={{ color: '#475569', fontSize: 13 }}>{allUploads.length} documents · {allUploads.reduce((a, u) => a + parseFloat(u.size), 0).toFixed(1)} MB total</p>
         </div>
-        <div
-          className="flex items-center gap-1 rounded-xl p-1 border"
-          style={{ backgroundColor: '#1A1F24', borderColor: '#2A2F35' }}
-        >
-          <button
-            onClick={() => setView('list')}
-            className="p-2 rounded-lg transition-all"
-            style={{
-              backgroundColor: view === 'list' ? '#2A2F35' : 'transparent',
-              color: view === 'list' ? '#FFFFFF' : '#9AA4B2',
-            }}
+        <Link to="/dashboard/upload" style={{ textDecoration: 'none' }}>
+          <button style={{
+            display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px', borderRadius: 10,
+            background: `linear-gradient(135deg, ${E.mid}, ${E.bright})`,
+            color: '#F0FDF4', fontSize: 14, fontWeight: 700, border: 'none', cursor: 'pointer',
+            boxShadow: `0 0 20px rgba(16,185,129,0.22)`,
+            transition: 'opacity 200ms',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.opacity = '0.87')}
+          onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
           >
-            <List className="w-4 h-4" />
+            <Upload size={15} /> New Upload
           </button>
-          <button
-            onClick={() => setView('grid')}
-            className="p-2 rounded-lg transition-all"
-            style={{
-              backgroundColor: view === 'grid' ? '#2A2F35' : 'transparent',
-              color: view === 'grid' ? '#FFFFFF' : '#9AA4B2',
-            }}
-          >
-            <Grid className="w-4 h-4" />
-          </button>
-        </div>
+        </Link>
       </div>
 
-      {/* Search & Filter */}
-      <div
-        className="flex gap-3 mb-6 p-3 rounded-2xl border"
-        style={{ backgroundColor: '#1A1F24', borderColor: '#2A2F35' }}
-      >
-        <div className="flex-1 relative">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#9AA4B2' }} />
+      {/* Toolbar */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
+        {/* Search */}
+        <div style={{ position: 'relative', flex: 1, minWidth: 220 }}>
+          <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#334155', pointerEvents: 'none' }} />
           <input
-            type="text"
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            placeholder="Search documents or tags..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border text-sm outline-none transition-all"
-            style={{ backgroundColor: '#111418', borderColor: '#2A2F35', color: '#FFFFFF' }}
-            onFocus={e => (e.currentTarget.style.borderColor = '#4ADE80')}
-            onBlur={e => (e.currentTarget.style.borderColor = '#2A2F35')}
+            type="text" value={search} onChange={e => setSearch(e.target.value)}
+            onFocus={() => setSearchFocus(true)} onBlur={() => setSearchFocus(false)}
+            placeholder="Search documents..."
+            style={{
+              width: '100%', padding: '10px 12px 10px 36px', borderRadius: 10,
+              background: searchFocus ? 'rgba(16,185,129,0.04)' : 'rgba(255,255,255,0.02)',
+              border: searchFocus ? '1px solid rgba(16,185,129,0.35)' : '1px solid rgba(255,255,255,0.07)',
+              color: '#F0FDF4', fontSize: 13, outline: 'none', boxSizing: 'border-box',
+              transition: 'all 200ms', boxShadow: searchFocus ? '0 0 0 3px rgba(16,185,129,0.07)' : 'none',
+            }}
           />
         </div>
-        <button
-          className="px-4 py-2.5 rounded-xl border text-sm flex items-center gap-2 transition-all hover:opacity-80"
-          style={{ borderColor: '#2A2F35', color: '#9AA4B2', backgroundColor: '#111418' }}
-        >
-          <Filter className="w-4 h-4" />
-          Filter
-        </button>
-        <button
-          className="px-4 py-2.5 rounded-xl border text-sm flex items-center gap-2 transition-all hover:opacity-80"
-          style={{ borderColor: '#2A2F35', color: '#9AA4B2', backgroundColor: '#111418' }}
-        >
-          <SortAsc className="w-4 h-4" />
-          Sort
-        </button>
-      </div>
 
-      {/* Count */}
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-sm" style={{ color: '#9AA4B2' }}>
-          <span style={{ color: '#FFFFFF', fontWeight: 600 }}>{filtered.length}</span> documents
-        </p>
-        <p className="text-xs" style={{ color: '#9AA4B2' }}>Sorted by date uploaded</p>
-      </div>
-
-      {/* List View */}
-      {view === 'list' && (
-        <div
-          className="rounded-2xl border overflow-hidden"
-          style={{ backgroundColor: '#1A1F24', borderColor: '#2A2F35' }}
-        >
-          {filtered.length === 0 ? (
-            <div className="py-16 text-center">
-              <File className="w-10 h-10 mx-auto mb-3" style={{ color: '#2A2F35' }} />
-              <p className="text-sm" style={{ color: '#9AA4B2' }}>No documents found</p>
-            </div>
-          ) : (
-            filtered.map((upload, idx) => (
-              <div
-                key={upload.id}
-                className="px-6 py-4 flex items-center gap-4 group transition-all hover:opacity-80 cursor-pointer"
-                style={{ borderBottom: idx < filtered.length - 1 ? '1px solid #2C3238' : 'none' }}
-              >
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: '#111418', border: '1px solid #2A2F35' }}
-                >
-                  <File className="w-4 h-4" style={{ color: '#9AA4B2' }} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm truncate" style={{ color: '#FFFFFF', fontWeight: 500 }}>
-                    {upload.title}
-                  </p>
-                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                    <span className="text-xs" style={{ color: '#9AA4B2' }}>
-                      {upload.type} · {upload.size}
-                    </span>
-                    {upload.tags.map(tag => (
-                      <span
-                        key={tag}
-                        className="px-2 py-0.5 rounded-full text-xs"
-                        style={{
-                          backgroundColor: (tagColorMap[tag] || '#4ADE80') + '18',
-                          color: tagColorMap[tag] || '#4ADE80',
-                        }}
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <p className="text-xs flex-shrink-0 hidden sm:block" style={{ color: '#9AA4B2' }}>
-                  {upload.date}
-                </p>
-                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button
-                    className="w-8 h-8 rounded-lg border flex items-center justify-center transition-all hover:opacity-80"
-                    style={{ borderColor: '#2A2F35', color: '#9AA4B2' }}
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(upload.id)}
-                    className="w-8 h-8 rounded-lg border flex items-center justify-center transition-all hover:opacity-80"
-                    style={{ borderColor: '#2A2F35', color: '#9AA4B2' }}
-                    onMouseEnter={e => {
-                      (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(248,113,113,0.4)';
-                      (e.currentTarget as HTMLButtonElement).style.color = '#F87171';
-                    }}
-                    onMouseLeave={e => {
-                      (e.currentTarget as HTMLButtonElement).style.borderColor = '#2A2F35';
-                      (e.currentTarget as HTMLButtonElement).style.color = '#9AA4B2';
-                    }}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
+        {/* Tag filter chips */}
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          <button onClick={() => setSelectedTag(null)} style={{
+            padding: '6px 12px', borderRadius: 99, fontSize: 12, fontWeight: 600,
+            background: !selectedTag ? 'rgba(16,185,129,0.15)' : 'rgba(255,255,255,0.03)',
+            border: !selectedTag ? '1px solid rgba(16,185,129,0.3)' : '1px solid rgba(255,255,255,0.07)',
+            color: !selectedTag ? E.light : '#475569', cursor: 'pointer', transition: 'all 150ms',
+          }}>All</button>
+          {allTags.slice(0, 5).map(tag => (
+            <button key={tag} onClick={() => setSelectedTag(selectedTag === tag ? null : tag)} style={{
+              padding: '6px 12px', borderRadius: 99, fontSize: 12, fontWeight: 600,
+              background: selectedTag === tag ? (tagColorMap[tag] || E.bright) + '1A' : 'rgba(255,255,255,0.03)',
+              border: selectedTag === tag ? `1px solid ${(tagColorMap[tag] || E.bright)}40` : '1px solid rgba(255,255,255,0.07)',
+              color: selectedTag === tag ? (tagColorMap[tag] || E.bright) : '#475569',
+              cursor: 'pointer', transition: 'all 150ms',
+            }}>{tag}</button>
+          ))}
         </div>
-      )}
 
-      {/* Grid View */}
-      {view === 'grid' && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {filtered.map((upload) => (
-            <div
-              key={upload.id}
-              className="group rounded-2xl p-5 border transition-all cursor-pointer hover:scale-[1.02]"
-              style={{ backgroundColor: '#1A1F24', borderColor: '#2A2F35' }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = '#4ADE8055')}
-              onMouseLeave={e => (e.currentTarget.style.borderColor = '#2A2F35')}
-            >
-              <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                style={{ backgroundColor: '#111418', border: '1px solid #2A2F35' }}
-              >
-                <File className="w-6 h-6" style={{ color: '#4ADE80' }} />
-              </div>
-              <p className="text-sm mb-1 truncate" style={{ color: '#FFFFFF', fontWeight: 600 }}>
-                {upload.title}
-              </p>
-              <p className="text-xs mb-3" style={{ color: '#9AA4B2' }}>
-                {upload.size} · {upload.date}
-              </p>
-              <div className="flex flex-wrap gap-1">
-                {upload.tags.slice(0, 2).map(tag => (
-                  <span
-                    key={tag}
-                    className="px-2 py-0.5 rounded-full text-xs"
-                    style={{
-                      backgroundColor: (tagColorMap[tag] || '#4ADE80') + '18',
-                      color: tagColorMap[tag] || '#4ADE80',
-                    }}
-                  >
-                    {tag}
-                  </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
+          {/* Sort */}
+          <div style={{ position: 'relative' }}>
+            <button onClick={() => setSortOpen(v => !v)} style={{
+              display: 'flex', alignItems: 'center', gap: 6, padding: '8px 12px', borderRadius: 9,
+              background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
+              color: '#64748B', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+            }}>
+              <Filter size={12} /> {sort} <ChevronDown size={11} style={{ transform: sortOpen ? 'rotate(180deg)' : 'none', transition: 'transform 200ms' }} />
+            </button>
+            {sortOpen && (
+              <div style={{ position: 'absolute', right: 0, top: 'calc(100% + 6px)', background: '#1E293B', border: '1px solid rgba(16,185,129,0.12)', borderRadius: 10, overflow: 'hidden', zIndex: 10, minWidth: 130 }}>
+                {['Newest', 'Oldest', 'Name', 'Size', 'Most Viewed'].map(s => (
+                  <button key={s} onClick={() => { setSort(s); setSortOpen(false); }} style={{
+                    display: 'block', width: '100%', padding: '9px 14px', textAlign: 'left',
+                    background: sort === s ? 'rgba(16,185,129,0.1)' : 'transparent',
+                    color: sort === s ? E.light : '#94A3B8', fontSize: 13, border: 'none', cursor: 'pointer',
+                    transition: 'background 150ms',
+                  }}>{s}</button>
                 ))}
               </div>
-              <div className="flex gap-2 mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  className="flex-1 py-1.5 rounded-lg text-xs border transition-all"
-                  style={{ borderColor: '#2A2F35', color: '#9AA4B2' }}
-                >
-                  <Download className="w-3 h-3 inline mr-1" />
-                  Download
-                </button>
-                <button
-                  onClick={() => handleDelete(upload.id)}
-                  className="w-8 h-8 rounded-lg border flex items-center justify-center flex-shrink-0"
-                  style={{ borderColor: 'rgba(248,113,113,0.3)', color: '#F87171' }}
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
+            )}
+          </div>
+
+          {/* View toggle */}
+          <div style={{ display: 'flex', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 9, overflow: 'hidden' }}>
+            {[{ id: 'grid', Icon: Grid }, { id: 'list', Icon: List }].map(({ id, Icon }) => (
+              <button key={id} onClick={() => setView(id as 'grid' | 'list')} style={{
+                padding: '8px 11px', background: view === id ? 'rgba(16,185,129,0.12)' : 'transparent',
+                border: 'none', cursor: 'pointer', color: view === id ? E.light : '#475569', transition: 'all 150ms',
+              }}>
+                <Icon size={14} />
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Results count */}
+      <p style={{ color: '#334155', fontSize: 12, marginBottom: 16 }}>
+        Showing {filtered.length} of {allUploads.length} documents{selectedTag ? ` tagged "${selectedTag}"` : ''}
+      </p>
+
+      {/* Grid view */}
+      {view === 'grid' && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
+          {filtered.map(u => (
+            <div
+              key={u.id}
+              onMouseEnter={() => setHoveredId(u.id)}
+              onMouseLeave={() => setHoveredId(null)}
+              style={{
+                borderRadius: 14, overflow: 'hidden',
+                background: hoveredId === u.id
+                  ? 'linear-gradient(145deg, rgba(20,83,45,0.22), rgba(15,23,42,0.95))'
+                  : 'rgba(15,23,42,0.7)',
+                border: hoveredId === u.id ? '1px solid rgba(16,185,129,0.3)' : '1px solid rgba(16,185,129,0.08)',
+                transition: 'all 220ms ease',
+                transform: hoveredId === u.id ? 'translateY(-2px)' : 'none',
+                boxShadow: hoveredId === u.id ? '0 16px 40px rgba(0,0,0,0.3)' : 'none',
+                cursor: 'pointer',
+              }}
+            >
+              {/* Thumbnail */}
+              <div style={{
+                height: 130, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: `linear-gradient(145deg, rgba(20,83,45,0.3), rgba(15,23,42,0.8))`,
+                borderBottom: '1px solid rgba(16,185,129,0.08)',
+                position: 'relative',
+              }}>
+                <span style={{ fontSize: 48 }}>{u.emoji}</span>
+                {/* Action overlay */}
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  background: 'rgba(5,46,22,0.85)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+                  opacity: hoveredId === u.id ? 1 : 0,
+                  transition: 'opacity 200ms',
+                }}>
+                  {[{ Icon: Eye, title: 'View' }, { Icon: Download, title: 'Download' }, { Icon: Trash2, title: 'Delete' }].map(({ Icon, title }) => (
+                    <button key={title} title={title} style={{
+                      width: 36, height: 36, borderRadius: 9,
+                      background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.25)',
+                      color: E.light, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      transition: 'background 150ms',
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(16,185,129,0.22)')}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'rgba(16,185,129,0.12)')}
+                    >
+                      <Icon size={15} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ padding: '14px 16px' }}>
+                <p style={{ color: '#F0FDF4', fontWeight: 700, fontSize: 13, marginBottom: 6, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{u.title}</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10, flexWrap: 'wrap' }}>
+                  {u.tags.map(t => (
+                    <span key={t} style={{
+                      padding: '2px 8px', borderRadius: 99, fontSize: 10, fontWeight: 700,
+                      background: (tagColorMap[t] || E.bright) + '1A',
+                      color: tagColorMap[t] || E.bright,
+                    }}>{t}</span>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#334155', fontSize: 11 }}>{u.date}</span>
+                  <span style={{ color: '#334155', fontSize: 11 }}>{u.size}</span>
+                </div>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* List view */}
+      {view === 'list' && (
+        <div style={{ background: 'rgba(15,23,42,0.7)', border: '1px solid rgba(16,185,129,0.08)', borderRadius: 14, overflow: 'hidden' }}>
+          {/* Header */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 100px 120px 80px 40px', gap: 0, padding: '10px 20px', borderBottom: '1px solid rgba(16,185,129,0.08)' }}>
+            {['Name', 'Size', 'Date', 'Views', ''].map(h => (
+              <span key={h} style={{ color: '#334155', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{h}</span>
+            ))}
+          </div>
+
+          {filtered.map((u, idx) => (
+            <div
+              key={u.id}
+              onMouseEnter={() => setHoveredId(u.id)}
+              onMouseLeave={() => setHoveredId(null)}
+              style={{
+                display: 'grid', gridTemplateColumns: '1fr 100px 120px 80px 40px',
+                alignItems: 'center', padding: '12px 20px',
+                borderBottom: idx < filtered.length - 1 ? '1px solid rgba(255,255,255,0.03)' : 'none',
+                background: hoveredId === u.id ? 'rgba(16,185,129,0.04)' : 'transparent',
+                transition: 'background 150ms', cursor: 'pointer',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 18 }}>
+                  {u.emoji}
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <p style={{ color: '#F0FDF4', fontWeight: 600, fontSize: 13, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{u.title}</p>
+                  <div style={{ display: 'flex', gap: 5, marginTop: 3, flexWrap: 'wrap' }}>
+                    {u.tags.map(t => (
+                      <span key={t} style={{ padding: '1px 6px', borderRadius: 99, fontSize: 9, fontWeight: 700, background: (tagColorMap[t] || E.bright) + '18', color: tagColorMap[t] || E.bright }}>{t}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <span style={{ color: '#475569', fontSize: 12 }}>{u.size}</span>
+              <span style={{ color: '#475569', fontSize: 12 }}>{u.date}</span>
+              <span style={{ color: '#475569', fontSize: 12 }}>{u.views}</span>
+              <button style={{ background: 'none', border: 'none', color: '#334155', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                onMouseEnter={e => (e.currentTarget.style.color = E.light)}
+                onMouseLeave={e => (e.currentTarget.style.color = '#334155')}
+              >
+                <MoreHorizontal size={16} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Empty state */}
+      {filtered.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '60px 24px' }}>
+          <span style={{ fontSize: 48 }}>🔍</span>
+          <p style={{ color: '#F0FDF4', fontWeight: 700, fontSize: 16, marginTop: 16 }}>No results found</p>
+          <p style={{ color: '#475569', fontSize: 13, marginTop: 6 }}>Try adjusting your search or filters</p>
         </div>
       )}
     </div>

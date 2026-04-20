@@ -1,113 +1,49 @@
-import { Code2, Github, Twitter, Linkedin } from 'lucide-react';
 import { Link } from 'react-router';
+import { Code2 } from 'lucide-react';
 
-const navLinks = [
-  {
-    title: 'Product',
-    links: [
-      { name: 'Features', href: '#features' },
-      { name: 'Pricing', href: '#pricing' },
-      { name: 'Changelog', href: '#' },
-      { name: 'Roadmap', href: '#' },
-    ],
-  },
-  {
-    title: 'Developers',
-    links: [
-      { name: 'Documentation', href: '#' },
-      { name: 'API Reference', href: '#' },
-      { name: 'GitHub', href: '#' },
-      { name: 'Status', href: '#' },
-    ],
-  },
-  {
-    title: 'Company',
-    links: [
-      { name: 'About', href: '#' },
-      { name: 'Blog', href: '#' },
-      { name: 'Privacy Policy', href: '#' },
-      { name: 'Terms of Service', href: '#' },
-    ],
-  },
+const E = { bright: '#10B981', light: '#34D399' };
+
+const cols = [
+  { label: 'Product', links: ['Features', 'Pricing', 'Changelog', 'Roadmap'] },
+  { label: 'Resources', links: ['Docs', 'Blog', 'Community', 'Status'] },
+  { label: 'Company', links: ['About', 'Careers', 'Privacy', 'Terms'] },
 ];
 
 export function Footer() {
   return (
-    <footer style={{ backgroundColor: '#111418', borderTop: '1px solid #2C3238' }}>
-      <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
-          {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
-            <Link to="/" className="flex items-center gap-2.5 mb-4">
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, #4ADE80, #22C55E)' }}
-              >
-                <Code2 className="w-4 h-4" style={{ color: '#111418' }} strokeWidth={2.5} />
+    <footer style={{ borderTop: '1px solid rgba(16,185,129,0.08)', padding: '60px 24px 40px' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 48, marginBottom: 56 }} className="grid-cols-2 md:grid-cols-4">
+          <div>
+            <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+              <div style={{ width: 30, height: 30, borderRadius: 8, background: `linear-gradient(135deg, ${E.light}, ${E.bright})`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Code2 size={15} color="#0F172A" strokeWidth={2.5} />
               </div>
-              <span style={{ color: '#FFFFFF', fontWeight: 600 }}>DevFlow</span>
+              <span style={{ color: '#F0FDF4', fontWeight: 700, fontSize: 16, letterSpacing: '-0.02em' }}>
+                Dev<span style={{ color: E.light }}>Flow</span>
+              </span>
             </Link>
-            <p className="text-sm leading-relaxed mb-6" style={{ color: '#9AA4B2' }}>
-              Your personal development library for code snippets, problems, and resources.
+            <p style={{ color: '#334155', fontSize: 13, lineHeight: 1.8, maxWidth: 240 }}>
+              The productivity platform built for developers who care about their craft.
             </p>
-            <div className="flex gap-3">
-              {[Github, Twitter, Linkedin].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="w-9 h-9 rounded-lg border flex items-center justify-center transition-all"
-                  style={{ borderColor: '#2A2F35', color: '#9AA4B2' }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLAnchorElement).style.borderColor = '#4ADE80';
-                    (e.currentTarget as HTMLAnchorElement).style.color = '#4ADE80';
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLAnchorElement).style.borderColor = '#2A2F35';
-                    (e.currentTarget as HTMLAnchorElement).style.color = '#9AA4B2';
-                  }}
-                >
-                  <Icon className="w-4 h-4" />
-                </a>
-              ))}
-            </div>
           </div>
-
-          {/* Nav Links */}
-          {navLinks.map((section) => (
-            <div key={section.title}>
-              <p className="text-xs uppercase tracking-widest mb-4" style={{ color: '#4ADE80', fontWeight: 600 }}>
-                {section.title}
-              </p>
-              <ul className="space-y-3">
-                {section.links.map((link) => (
-                  <li key={link.name}>
-                    <a
-                      href={link.href}
-                      className="text-sm transition-colors"
-                      style={{ color: '#9AA4B2' }}
-                      onMouseEnter={e => (e.currentTarget.style.color = '#FFFFFF')}
-                      onMouseLeave={e => (e.currentTarget.style.color = '#9AA4B2')}
-                    >
-                      {link.name}
-                    </a>
-                  </li>
+          {cols.map(c => (
+            <div key={c.label}>
+              <p style={{ color: '#F0FDF4', fontWeight: 700, fontSize: 13, marginBottom: 18, letterSpacing: '0.04em' }}>{c.label}</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {c.links.map(l => (
+                  <Link key={l} to="/" style={{ color: '#334155', fontSize: 13, textDecoration: 'none', transition: 'color 200ms' }}
+                    onMouseEnter={e => (e.currentTarget.style.color = E.light)}
+                    onMouseLeave={e => (e.currentTarget.style.color = '#334155')}
+                  >{l}</Link>
                 ))}
-              </ul>
+              </div>
             </div>
           ))}
         </div>
-
-        {/* Bottom Bar */}
-        <div
-          className="pt-8 flex flex-col sm:flex-row justify-between items-center gap-4"
-          style={{ borderTop: '1px solid #2C3238' }}
-        >
-          <p className="text-sm" style={{ color: '#9AA4B2' }}>
-            © 2026 DevFlow. All rights reserved.
-          </p>
-          <p className="font-mono text-xs" style={{ color: '#2A2F35' }}>
-            v1.0.0 · Built with ❤️ for developers
-          </p>
+        <div style={{ borderTop: '1px solid rgba(16,185,129,0.06)', paddingTop: 28, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+          <p style={{ color: '#1E293B', fontSize: 12 }}>© 2026 DevFlow. All rights reserved.</p>
+          <p style={{ color: '#1E293B', fontSize: 12 }}>Built with ❤️ for developers</p>
         </div>
       </div>
     </footer>

@@ -1,363 +1,262 @@
-import { Check, Zap, Star, ArrowRight, Code2, Sparkles } from 'lucide-react';
 import { Link } from 'react-router';
 import { useState } from 'react';
+import { Check, Zap, ArrowRight, Code2 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 
+const E = { bright: '#10B981', light: '#34D399', mid: '#166534', dark: '#14532D' };
+
 const plans = [
   {
+    id: 'free',
     name: 'Free',
-    priceMonthly: 0,
-    priceYearly: 0,
-    currency: '₹',
-    description: 'Everything you need to get started',
+    monthly: 0, yearly: 0,
+    desc: 'Start building your flow',
     features: [
-      'Upload your own notes',
-      'Access free content library',
-      '50 uploads per month',
-      'Basic search & filters',
-      '5 GB storage',
+      '50 uploads / month',
+      '5 GB secure storage',
+      'Basic focus timer (Pomodoro)',
+      '100 coding challenges',
       'Community support',
+      'Public roadmaps',
     ],
-    cta: 'Get Started Free',
-    highlighted: false,
-    accent: '#9AA4B2',
-    badge: null,
+    notIncluded: ['AI focus assistant', 'Career AI roadmap', 'Skill gap analytics'],
+    cta: 'Get started free', link: '/signup', highlight: false,
   },
   {
+    id: 'pro',
     name: 'Pro',
-    priceMonthly: 299,
-    priceYearly: 224,
-    currency: '₹',
-    description: 'Full access for serious developers',
+    monthly: 19, yearly: 15,
+    desc: 'For serious developers',
+    badge: 'MOST POPULAR',
     features: [
-      'Everything in Free',
-      'Premium content library',
-      'Full library access (100+ docs)',
       'Unlimited uploads',
-      'Advanced AI-powered search',
-      'Download for offline reading',
-      '100 GB storage',
-      'Priority support (24h)',
+      '50 GB secure storage',
+      'AI focus assistant & coach',
+      'All 1,500+ coding challenges',
+      'Career AI roadmap generator',
+      'Skill gap analytics & reports',
+      'Advanced focus sessions',
+      'Priority support (< 4h)',
+      'Custom learning paths',
     ],
-    cta: 'Upgrade to Pro',
-    highlighted: true,
-    accent: '#4ADE80',
-    badge: 'Most Popular',
+    notIncluded: [],
+    cta: 'Start 14-day free trial', link: '/signup', highlight: true,
+  },
+  {
+    id: 'team',
+    name: 'Team',
+    monthly: 49, yearly: 39,
+    desc: 'For engineering teams',
+    features: [
+      'Everything in Pro',
+      'Up to 20 team members',
+      'Team analytics dashboard',
+      'Shared knowledge vault',
+      'Custom team roadmaps',
+      'Manager insights & reports',
+      'SSO & SAML integration',
+      'Dedicated success manager',
+      'SLA & uptime guarantee',
+    ],
+    notIncluded: [],
+    cta: 'Contact sales', link: '/signup', highlight: false,
   },
 ];
 
 const faqs = [
-  {
-    q: 'Can I cancel anytime?',
-    a: 'Yes, you can cancel your Pro subscription at any time. You\'ll retain access until the end of your billing period.',
-  },
-  {
-    q: 'What payment methods are accepted?',
-    a: 'We accept all major credit/debit cards, UPI, and net banking via Stripe\'s secure payment gateway.',
-  },
-  {
-    q: 'Is there a free trial for Pro?',
-    a: 'Yes! New users get a 7-day free trial of Pro features. No credit card required.',
-  },
-  {
-    q: 'What is included in the premium library?',
-    a: 'Premium library includes System Design guides, Advanced TypeScript, DSA patterns, Docker & Kubernetes, and more — all curated by expert developers.',
-  },
+  { q: 'Can I switch plans at any time?', a: 'Yes! Upgrade or downgrade at any time. Upgrades take effect immediately, downgrades at the end of your billing cycle.' },
+  { q: 'Is there a free trial for Pro?', a: 'Absolutely. The Pro plan comes with a 14-day free trial, no credit card required.' },
+  { q: 'What happens to my data if I downgrade?', a: 'Your data is always safe. If you exceed free plan limits after downgrading, you\'ll be prompted to upgrade to access new features.' },
+  { q: 'Do you offer student or non-profit discounts?', a: 'Yes! Students get 50% off Pro. Non-profits get 40% off. Contact us with verification to claim your discount.' },
 ];
 
 export default function PricingPage() {
-  const [billing, setBilling] = useState<'monthly' | 'yearly'>('monthly');
+  const [yearly, setYearly] = useState(true);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <div style={{ backgroundColor: '#111418', minHeight: '100vh' }}>
+    <div style={{ backgroundColor: '#0F172A', minHeight: '100vh' }}>
       <Navbar />
 
-      {/* Hero */}
-      <section className="pt-32 pb-16 px-6 text-center relative overflow-hidden">
-        {/* Background grid */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: `linear-gradient(rgba(74,222,128,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(74,222,128,0.03) 1px, transparent 1px)`,
-            backgroundSize: '50px 50px',
-          }}
-        />
-        {/* Glow */}
-        <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] pointer-events-none"
-          style={{
-            background: 'radial-gradient(ellipse at center, rgba(74,222,128,0.12) 0%, transparent 70%)',
-          }}
-        />
+      {/* Dot grid */}
+      <div style={{ position: 'fixed', inset: 0, backgroundImage: 'radial-gradient(rgba(16,185,129,0.04) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
+      <div style={{ position: 'fixed', top: '10%', left: '50%', transform: 'translateX(-50%)', width: 800, height: 400, borderRadius: '50%', background: 'radial-gradient(ellipse at center, rgba(16,185,129,0.06) 0%, transparent 65%)', pointerEvents: 'none' }} />
 
-        <div className="relative z-10 max-w-3xl mx-auto">
-          <div
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border mb-6 text-xs"
-            style={{
-              backgroundColor: 'rgba(74,222,128,0.08)',
-              borderColor: 'rgba(74,222,128,0.2)',
-              color: '#4ADE80',
-            }}
-          >
-            <Sparkles className="w-3 h-3" />
-            Simple, transparent pricing
+      <div style={{ position: 'relative', zIndex: 1, padding: '80px 24px 100px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+
+          {/* Header */}
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <span style={{ display: 'inline-block', padding: '5px 16px', borderRadius: 99, background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', fontSize: 12, color: E.light, fontWeight: 700, letterSpacing: '0.08em', marginBottom: 20 }}>
+              PRICING
+            </span>
+            <h1 style={{ fontSize: 'clamp(32px, 5vw, 56px)', fontWeight: 900, color: '#F0FDF4', letterSpacing: '-0.04em', lineHeight: 1.06, marginBottom: 18 }}>
+              Simple, transparent<br />
+              <span style={{ background: `linear-gradient(135deg, ${E.bright}, ${E.light})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                pricing
+              </span>
+            </h1>
+            <p style={{ color: '#64748B', fontSize: 17, maxWidth: 500, margin: '0 auto 36px', lineHeight: 1.7 }}>
+              Start free. Scale as you grow. No hidden fees, no lock-in, cancel anytime.
+            </p>
+
+            {/* Annual toggle */}
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 0, background: 'rgba(15,23,42,0.8)', border: '1px solid rgba(16,185,129,0.12)', borderRadius: 99, padding: '5px 6px' }}>
+              <button onClick={() => setYearly(false)} style={{
+                padding: '7px 22px', borderRadius: 99, fontSize: 13, fontWeight: 700,
+                background: !yearly ? 'rgba(16,185,129,0.12)' : 'transparent',
+                color: !yearly ? E.light : '#475569',
+                border: 'none', cursor: 'pointer', transition: 'all 200ms',
+              }}>Monthly</button>
+              <button onClick={() => setYearly(true)} style={{
+                padding: '7px 22px', borderRadius: 99, fontSize: 13, fontWeight: 700,
+                background: yearly ? 'rgba(16,185,129,0.12)' : 'transparent',
+                color: yearly ? E.light : '#475569',
+                border: 'none', cursor: 'pointer', transition: 'all 200ms',
+                display: 'flex', alignItems: 'center', gap: 9,
+              }}>
+                Annual
+                <span style={{ padding: '2px 9px', borderRadius: 99, background: 'rgba(16,185,129,0.2)', border: '1px solid rgba(16,185,129,0.3)', fontSize: 10, color: E.light, fontWeight: 900 }}>SAVE 20%</span>
+              </button>
+            </div>
           </div>
 
-          <h1 className="mb-4" style={{ color: '#FFFFFF', fontWeight: 800, fontSize: 'clamp(2rem, 5vw, 3.5rem)', lineHeight: 1.15 }}>
-            Start free,{' '}
-            <span
-              style={{
-                background: 'linear-gradient(135deg, #4ADE80, #22C55E)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              upgrade when ready
-            </span>
-          </h1>
-          <p className="mx-auto max-w-lg" style={{ color: '#9AA4B2', fontSize: '1.125rem', lineHeight: 1.7 }}>
-            Everything you need to learn, organize, and grow as a developer — with no hidden fees.
-          </p>
+          {/* Plan cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20, alignItems: 'stretch', marginBottom: 80 }}>
+            {plans.map((plan) => (
+              <div key={plan.id} style={{
+                borderRadius: 20,
+                border: plan.highlight ? `1px solid rgba(16,185,129,0.4)` : '1px solid rgba(16,185,129,0.1)',
+                background: plan.highlight
+                  ? `linear-gradient(160deg, rgba(22,101,52,0.55) 0%, rgba(15,23,42,0.96) 55%)`
+                  : 'rgba(15,23,42,0.65)',
+                padding: '32px 28px',
+                position: 'relative',
+                display: 'flex', flexDirection: 'column',
+                boxShadow: plan.highlight ? `0 0 80px rgba(16,185,129,0.1), inset 0 1px 0 rgba(52,211,153,0.1)` : 'none',
+                transform: plan.highlight ? 'scale(1.02)' : 'none',
+              }}>
+                {/* Popular badge */}
+                {plan.badge && (
+                  <div style={{ position: 'absolute', top: -1, left: '50%', transform: 'translateX(-50%)' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 16px', borderRadius: '0 0 12px 12px', background: `linear-gradient(135deg, ${E.mid}, ${E.bright})`, fontSize: 10, color: '#F0FDF4', fontWeight: 900, letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>
+                      <Zap size={9} fill="#F0FDF4" /> {plan.badge}
+                    </span>
+                  </div>
+                )}
 
-          {/* Billing toggle */}
-          <div className="flex justify-center mt-8">
-            <div
-              className="flex items-center gap-1 p-1 rounded-xl border"
-              style={{ backgroundColor: '#1A1F24', borderColor: '#2A2F35' }}
-            >
-              {(['monthly', 'yearly'] as const).map((b) => (
-                <button
-                  key={b}
-                  onClick={() => setBilling(b)}
-                  className="px-5 py-2 rounded-lg text-sm capitalize transition-all"
-                  style={
-                    billing === b
-                      ? { backgroundColor: '#2A2F35', color: '#FFFFFF', fontWeight: 600 }
-                      : { color: '#9AA4B2' }
-                  }
-                >
-                  {b}
-                  {b === 'yearly' && (
-                    <span className="ml-2 text-xs" style={{ color: '#4ADE80' }}>Save 25%</span>
+                {/* Plan name & price */}
+                <div style={{ marginBottom: 24 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                    <span style={{ fontSize: 12, color: E.light, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{plan.name}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 3, marginBottom: 4 }}>
+                    <span style={{ color: '#F0FDF4', fontSize: 50, fontWeight: 900, letterSpacing: '-0.05em', lineHeight: 1 }}>
+                      ${yearly ? plan.yearly : plan.monthly}
+                    </span>
+                    {(yearly ? plan.yearly : plan.monthly) > 0 && (
+                      <div>
+                        <span style={{ color: '#475569', fontSize: 14 }}>/mo</span>
+                        {yearly && <p style={{ color: '#334155', fontSize: 11, marginTop: 2 }}>billed ${(yearly ? plan.yearly : plan.monthly) * 12}/yr</p>}
+                      </div>
+                    )}
+                  </div>
+                  <p style={{ color: '#475569', fontSize: 13 }}>{plan.desc}</p>
+                </div>
+
+                {/* CTA */}
+                <Link to={plan.link} style={{ textDecoration: 'none', display: 'block', marginBottom: 28 }}>
+                  <button style={{
+                    width: '100%', padding: '13px', borderRadius: 12,
+                    background: plan.highlight ? `linear-gradient(135deg, ${E.mid}, ${E.bright})` : 'transparent',
+                    border: plan.highlight ? 'none' : '1px solid rgba(16,185,129,0.22)',
+                    color: plan.highlight ? '#F0FDF4' : E.light,
+                    fontSize: 14, fontWeight: 700, cursor: 'pointer',
+                    boxShadow: plan.highlight ? `0 0 28px rgba(16,185,129,0.24)` : 'none',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                    transition: 'opacity 200ms',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+                  >
+                    {plan.cta} <ArrowRight size={14} />
+                  </button>
+                </Link>
+
+                {/* Divider */}
+                <div style={{ height: 1, background: 'rgba(16,185,129,0.08)', marginBottom: 24 }} />
+
+                {/* Features */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 11 }}>
+                  {plan.features.map(f => (
+                    <div key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                      <div style={{ width: 18, height: 18, borderRadius: '50%', background: `rgba(16,185,129,0.15)`, border: '1px solid rgba(16,185,129,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 }}>
+                        <Check size={10} color={E.bright} strokeWidth={3} />
+                      </div>
+                      <span style={{ color: '#94A3B8', fontSize: 13, lineHeight: 1.5 }}>{f}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Enterprise banner */}
+          <div style={{
+            borderRadius: 18, padding: '36px 40px',
+            background: 'rgba(15,23,42,0.7)', border: '1px solid rgba(16,185,129,0.1)',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 24,
+            marginBottom: 80,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+              <div style={{ width: 48, height: 48, borderRadius: 12, background: 'rgba(16,185,129,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Code2 size={22} color={E.bright} />
+              </div>
+              <div>
+                <h3 style={{ color: '#F0FDF4', fontWeight: 800, fontSize: 18, letterSpacing: '-0.02em', marginBottom: 6 }}>Need an enterprise plan?</h3>
+                <p style={{ color: '#475569', fontSize: 14 }}>Custom pricing, unlimited seats, dedicated infrastructure, SLA, and white-glove onboarding.</p>
+              </div>
+            </div>
+            <Link to="/signup" style={{ textDecoration: 'none' }}>
+              <button style={{
+                padding: '12px 26px', borderRadius: 10, flexShrink: 0,
+                background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)',
+                color: E.light, fontSize: 14, fontWeight: 700, cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: 8, transition: 'all 200ms',
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(16,185,129,0.18)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(16,185,129,0.1)'; }}
+              >
+                Talk to sales <ArrowRight size={14} />
+              </button>
+            </Link>
+          </div>
+
+          {/* FAQ */}
+          <div style={{ maxWidth: 720, margin: '0 auto' }}>
+            <h2 style={{ color: '#F0FDF4', fontWeight: 900, fontSize: 28, letterSpacing: '-0.03em', textAlign: 'center', marginBottom: 36 }}>Frequently asked questions</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {faqs.map((f, i) => (
+                <div key={i} style={{ borderRadius: 12, border: '1px solid rgba(16,185,129,0.1)', background: 'rgba(15,23,42,0.6)', overflow: 'hidden', transition: 'border-color 200ms' }}>
+                  <button onClick={() => setOpenFaq(openFaq === i ? null : i)} style={{
+                    width: '100%', padding: '18px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left',
+                  }}>
+                    <span style={{ color: '#F0FDF4', fontWeight: 700, fontSize: 15 }}>{f.q}</span>
+                    <span style={{ color: E.bright, fontSize: 20, fontWeight: 300, transform: openFaq === i ? 'rotate(45deg)' : 'none', transition: 'transform 200ms', flexShrink: 0 }}>+</span>
+                  </button>
+                  {openFaq === i && (
+                    <div style={{ padding: '0 22px 18px' }}>
+                      <p style={{ color: '#64748B', fontSize: 14, lineHeight: 1.7 }}>{f.a}</p>
+                    </div>
                   )}
-                </button>
+                </div>
               ))}
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Plans */}
-      <section className="pb-20 px-6">
-        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
-          {plans.map((plan) => {
-            const price = billing === 'yearly' ? plan.priceYearly : plan.priceMonthly;
-            return (
-              <div
-                key={plan.name}
-                className="relative rounded-2xl border overflow-hidden"
-                style={{
-                  backgroundColor: '#1A1F24',
-                  borderColor: plan.highlighted ? '#4ADE80' : '#2A2F35',
-                  boxShadow: plan.highlighted ? '0 0 60px rgba(74,222,128,0.12)' : 'none',
-                }}
-              >
-                {/* Background glow for Pro */}
-                {plan.highlighted && (
-                  <div
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                      background: 'radial-gradient(ellipse at top, rgba(74,222,128,0.06) 0%, transparent 60%)',
-                    }}
-                  />
-                )}
-
-                {/* Popular badge */}
-                {plan.badge && (
-                  <div className="absolute -top-px left-1/2 -translate-x-1/2">
-                    <div
-                      className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs"
-                      style={{
-                        background: 'linear-gradient(135deg, #4ADE80, #22C55E)',
-                        color: '#111418',
-                        fontWeight: 700,
-                        borderRadius: '0 0 10px 10px',
-                      }}
-                    >
-                      <Star className="w-3 h-3" fill="#111418" />
-                      {plan.badge}
-                    </div>
-                  </div>
-                )}
-
-                <div className="relative z-10 p-8">
-                  {/* Plan name */}
-                  <div className="mb-6">
-                    <div className="flex items-center gap-2 mb-1">
-                      <div
-                        className="w-7 h-7 rounded-lg flex items-center justify-center"
-                        style={{
-                          background: plan.highlighted
-                            ? 'linear-gradient(135deg, #4ADE80, #22C55E)'
-                            : '#2A2F35',
-                        }}
-                      >
-                        {plan.highlighted ? (
-                          <Zap className="w-3.5 h-3.5" style={{ color: '#111418' }} />
-                        ) : (
-                          <Code2 className="w-3.5 h-3.5" style={{ color: '#9AA4B2' }} />
-                        )}
-                      </div>
-                      <h3 style={{ color: '#FFFFFF', fontWeight: 700 }}>{plan.name}</h3>
-                    </div>
-                    <p className="text-sm" style={{ color: '#9AA4B2' }}>{plan.description}</p>
-                  </div>
-
-                  {/* Price */}
-                  <div className="flex items-baseline gap-1 mb-1">
-                    <span style={{ color: '#9AA4B2', fontSize: '1.2rem' }}>{plan.currency}</span>
-                    <span
-                      style={{
-                        color: plan.highlighted ? '#4ADE80' : '#FFFFFF',
-                        fontSize: '3.5rem',
-                        fontWeight: 800,
-                        lineHeight: 1,
-                      }}
-                    >
-                      {price}
-                    </span>
-                    <span style={{ color: '#9AA4B2' }}>/mo</span>
-                  </div>
-                  {billing === 'yearly' && plan.highlighted && (
-                    <p className="text-xs mb-6" style={{ color: '#4ADE80' }}>
-                      Billed annually · Save ₹{(plan.priceMonthly - plan.priceYearly) * 12}/yr
-                    </p>
-                  )}
-                  {(billing === 'monthly' || !plan.highlighted) && <div className="mb-6" />}
-
-                  {/* CTA */}
-                  <Link to={plan.highlighted ? '/dashboard/subscription' : '/signup'}>
-                    <button
-                      className="w-full py-3.5 rounded-xl text-sm flex items-center justify-center gap-2 transition-all hover:opacity-90 mb-8"
-                      style={
-                        plan.highlighted
-                          ? {
-                              background: 'linear-gradient(135deg, #4ADE80, #22C55E)',
-                              color: '#111418',
-                              fontWeight: 700,
-                              boxShadow: '0 0 30px rgba(74,222,128,0.25)',
-                            }
-                          : {
-                              backgroundColor: '#2A2F35',
-                              color: '#FFFFFF',
-                              fontWeight: 600,
-                            }
-                      }
-                    >
-                      {plan.cta}
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                  </Link>
-
-                  {/* Divider */}
-                  <div className="mb-6" style={{ borderTop: '1px solid #2C3238' }} />
-
-                  {/* Features */}
-                  <ul className="space-y-3">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-center gap-3">
-                        <div
-                          className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
-                          style={{
-                            backgroundColor: plan.highlighted
-                              ? 'rgba(74,222,128,0.15)'
-                              : 'rgba(154,164,178,0.15)',
-                          }}
-                        >
-                          <Check
-                            className="w-3 h-3"
-                            style={{ color: plan.highlighted ? '#4ADE80' : '#9AA4B2' }}
-                            strokeWidth={2.5}
-                          />
-                        </div>
-                        <span className="text-sm" style={{ color: '#9AA4B2' }}>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Trust signals */}
-        <div className="max-w-4xl mx-auto mt-10">
-          <div
-            className="rounded-2xl border p-5 flex flex-wrap items-center justify-center gap-8"
-            style={{ backgroundColor: '#1A1F24', borderColor: '#2A2F35' }}
-          >
-            {[
-              { label: 'No credit card required', icon: '🔒' },
-              { label: '7-day free trial on Pro', icon: '✨' },
-              { label: 'Cancel anytime', icon: '↩️' },
-              { label: 'Secure payments via Stripe', icon: '💳' },
-            ].map((item) => (
-              <div key={item.label} className="flex items-center gap-2">
-                <span style={{ fontSize: '1rem' }}>{item.icon}</span>
-                <span className="text-sm" style={{ color: '#9AA4B2' }}>{item.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="pb-24 px-6">
-        <div className="max-w-2xl mx-auto">
-          <h2
-            className="text-center mb-8"
-            style={{ color: '#FFFFFF', fontWeight: 700, fontSize: '1.5rem' }}
-          >
-            Frequently asked questions
-          </h2>
-          <div className="space-y-3">
-            {faqs.map((faq, i) => (
-              <div
-                key={i}
-                className="rounded-xl border overflow-hidden"
-                style={{ backgroundColor: '#1A1F24', borderColor: '#2A2F35' }}
-              >
-                <button
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full px-5 py-4 text-left flex items-center justify-between transition-all"
-                >
-                  <span className="text-sm" style={{ color: '#FFFFFF', fontWeight: 500 }}>
-                    {faq.q}
-                  </span>
-                  <span
-                    className="text-sm flex-shrink-0 ml-4 transition-transform"
-                    style={{
-                      color: '#4ADE80',
-                      transform: openFaq === i ? 'rotate(45deg)' : 'rotate(0)',
-                    }}
-                  >
-                    +
-                  </span>
-                </button>
-                {openFaq === i && (
-                  <div className="px-5 pb-4" style={{ borderTop: '1px solid #2C3238' }}>
-                    <p className="text-sm pt-3" style={{ color: '#9AA4B2', lineHeight: 1.7 }}>
-                      {faq.a}
-                    </p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      </div>
 
       <Footer />
     </div>

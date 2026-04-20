@@ -12,6 +12,16 @@ import DocumentViewer from "./pages/DocumentViewer";
 import PricingPage from "./pages/PricingPage";
 import PaymentSuccess from "./pages/PaymentSuccess";
 
+// New Pages
+import FocusMode from "./pages/FocusModeNew";
+import CodingArena from "./pages/CodingArena";
+import Competitions from "./pages/Competitions";
+import CareerAI from "./pages/CareerAI";
+import SkillGap from "./pages/SkillGap";
+import Roadmap from "./pages/Roadmap";
+import Profile from "./pages/Profile";
+import Leaderboard from "./pages/Leaderboard";
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -37,6 +47,39 @@ export const router = createBrowserRouter([
         index: true,
         Component: Dashboard,
       },
+      {
+        path: "focus-mode",
+        Component: FocusMode,
+      },
+      {
+        path: "coding-arena",
+        Component: CodingArena,
+      },
+      {
+        path: "competitions",
+        Component: Competitions,
+      },
+      {
+        path: "career-ai",
+        Component: CareerAI,
+      },
+      {
+        path: "skill-gap",
+        Component: SkillGap,
+      },
+      {
+        path: "roadmap",
+        Component: Roadmap,
+      },
+      {
+        path: "profile",
+        Component: Profile,
+      },
+      {
+        path: "leaderboard",
+        Component: Leaderboard,
+      },
+      // Keep existing dashboard routes available for continuity
       {
         path: "upload",
         Component: UploadContent,

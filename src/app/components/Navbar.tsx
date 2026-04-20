@@ -1,115 +1,85 @@
-import { Code2, Menu, X } from 'lucide-react';
 import { Link } from 'react-router';
 import { useState } from 'react';
+import { Code2, Menu, X } from 'lucide-react';
+
+const E = { bright: '#10B981', light: '#34D399', dark: '#166534' };
 
 export function Navbar() {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
-    <nav
-      className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl border-b"
-      style={{
-        backgroundColor: 'rgba(17,20,24,0.85)',
-        borderColor: '#2A2F35',
-      }}
-    >
-      <div className="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
+    <nav style={{
+      position: 'sticky', top: 0, zIndex: 100,
+      backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+      background: 'rgba(15,23,42,0.82)',
+      borderBottom: '1px solid rgba(16,185,129,0.1)',
+    }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2.5 group">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all group-hover:shadow-lg"
-            style={{ background: 'linear-gradient(135deg, #4ADE80, #22C55E)', boxShadow: '0 0 0 0 rgba(74,222,128,0)' }}
-          >
-            <Code2 className="w-4 h-4" style={{ color: '#111418' }} strokeWidth={2.5} />
+        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{
+            width: 34, height: 34, borderRadius: 9,
+            background: `linear-gradient(135deg, ${E.light}, ${E.bright})`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: `0 0 16px rgba(16,185,129,0.3)`,
+          }}>
+            <Code2 size={17} color="#0F172A" strokeWidth={2.5} />
           </div>
-          <span className="text-lg tracking-tight" style={{ color: '#FFFFFF', fontWeight: 600 }}>DevFlow</span>
+          <span style={{ color: '#F0FDF4', fontWeight: 700, fontSize: 18, letterSpacing: '-0.02em' }}>
+            Dev<span style={{ color: E.light }}>Flow</span>
+          </span>
         </Link>
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-1">
-          <a
-            href="#features"
-            className="px-4 py-2 text-sm rounded-lg transition-colors"
-            style={{ color: '#9AA4B2' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#FFFFFF')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#9AA4B2')}
-          >
-            Features
-          </a>
-          <a
-            href="#pricing"
-            className="px-4 py-2 text-sm rounded-lg transition-colors"
-            style={{ color: '#9AA4B2' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#FFFFFF')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#9AA4B2')}
-          >
-            Pricing
-          </a>
-          <a
-            href="#"
-            className="px-4 py-2 text-sm rounded-lg transition-colors"
-            style={{ color: '#9AA4B2' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#FFFFFF')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#9AA4B2')}
-          >
-            Docs
-          </a>
+        {/* Desktop links */}
+        <div className="hidden md:flex" style={{ alignItems: 'center', gap: 36 }}>
+          {['Features', 'Solutions', 'Pricing', 'Blog'].map(l => (
+            <Link key={l} to={l === 'Pricing' ? '/pricing' : '/'} style={{ color: '#94A3B8', fontSize: 14, fontWeight: 500, textDecoration: 'none', transition: 'color 200ms' }}
+              onMouseEnter={e => (e.currentTarget.style.color = E.light)}
+              onMouseLeave={e => (e.currentTarget.style.color = '#94A3B8')}
+            >{l}</Link>
+          ))}
         </div>
 
-        {/* Desktop Auth */}
-        <div className="hidden md:flex items-center gap-3">
-          <Link to="/login">
-            <button
-              className="px-4 py-2 text-sm rounded-lg transition-all"
-              style={{ color: '#9AA4B2' }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#FFFFFF')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#9AA4B2')}
-            >
-              Login
-            </button>
-          </Link>
-          <Link to="/signup">
-            <button
-              className="px-4 py-2 text-sm rounded-lg transition-all"
-              style={{
-                background: 'linear-gradient(135deg, #4ADE80, #22C55E)',
-                color: '#111418',
-                fontWeight: 600,
-              }}
-              onMouseEnter={e => (e.currentTarget.style.opacity = '0.9')}
-              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
-            >
-              Get Started
-            </button>
+        {/* CTA */}
+        <div className="hidden md:flex" style={{ alignItems: 'center', gap: 12 }}>
+          <Link to="/login" style={{ color: '#94A3B8', fontSize: 14, fontWeight: 500, textDecoration: 'none', padding: '8px 16px', borderRadius: 8, transition: 'color 200ms' }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#F0FDF4')}
+            onMouseLeave={e => (e.currentTarget.style.color = '#94A3B8')}
+          >Sign in</Link>
+          <Link to="/signup" style={{ textDecoration: 'none' }}>
+            <button style={{
+              padding: '9px 20px', borderRadius: 9,
+              background: `linear-gradient(135deg, ${E.dark}, ${E.bright})`,
+              color: '#F0FDF4', fontSize: 14, fontWeight: 700,
+              border: 'none', cursor: 'pointer',
+              boxShadow: `0 0 20px rgba(16,185,129,0.25)`,
+              transition: 'opacity 200ms',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+            onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+            >Get Started Free</button>
           </Link>
         </div>
 
-        {/* Mobile Toggle */}
-        <button
-          className="md:hidden p-2 rounded-lg"
-          style={{ color: '#9AA4B2' }}
-          onClick={() => setMobileOpen(!mobileOpen)}
-        >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        {/* Mobile toggle */}
+        <button className="md:hidden" onClick={() => setOpen(v => !v)}
+          style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer' }}>
+          {open ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
-      {mobileOpen && (
-        <div className="md:hidden border-t px-6 py-4 space-y-2" style={{ backgroundColor: '#1A1F24', borderColor: '#2A2F35' }}>
-          <a href="#features" className="block px-3 py-2 text-sm rounded-lg" style={{ color: '#9AA4B2' }}>Features</a>
-          <a href="#pricing" className="block px-3 py-2 text-sm rounded-lg" style={{ color: '#9AA4B2' }}>Pricing</a>
-          <a href="#" className="block px-3 py-2 text-sm rounded-lg" style={{ color: '#9AA4B2' }}>Docs</a>
-          <div className="pt-3 border-t flex flex-col gap-2" style={{ borderColor: '#2C3238' }}>
-            <Link to="/login">
-              <button className="w-full px-4 py-2 text-sm rounded-lg border" style={{ color: '#9AA4B2', borderColor: '#2A2F35' }}>
-                Login
-              </button>
-            </Link>
-            <Link to="/signup">
-              <button className="w-full px-4 py-2 text-sm rounded-lg" style={{ background: 'linear-gradient(135deg, #4ADE80, #22C55E)', color: '#111418', fontWeight: 600 }}>
-                Get Started
-              </button>
+      {/* Mobile menu */}
+      {open && (
+        <div style={{ borderTop: '1px solid rgba(16,185,129,0.1)', background: 'rgba(15,23,42,0.98)', padding: '16px 24px 24px' }}>
+          {['Features', 'Solutions', 'Pricing', 'Blog'].map(l => (
+            <div key={l} style={{ padding: '12px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+              <Link to="/" style={{ color: '#94A3B8', fontSize: 15, textDecoration: 'none' }}>{l}</Link>
+            </div>
+          ))}
+          <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <Link to="/login" style={{ color: '#94A3B8', fontSize: 14, textDecoration: 'none', textAlign: 'center', padding: '10px', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 9 }}>Sign in</Link>
+            <Link to="/signup" style={{ textDecoration: 'none' }}>
+              <button style={{ width: '100%', padding: '11px', borderRadius: 9, background: `linear-gradient(135deg, ${E.dark}, ${E.bright})`, color: '#F0FDF4', fontSize: 14, fontWeight: 700, border: 'none', cursor: 'pointer' }}>Get Started Free</button>
             </Link>
           </div>
         </div>

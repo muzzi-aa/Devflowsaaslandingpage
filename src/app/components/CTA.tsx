@@ -1,90 +1,62 @@
-import { ArrowRight, Terminal } from 'lucide-react';
 import { Link } from 'react-router';
+import { ArrowRight, Terminal } from 'lucide-react';
+
+const E = { bright: '#10B981', light: '#34D399', mid: '#166534', dark: '#14532D' };
 
 export function CTA() {
   return (
-    <section className="py-28 px-6" style={{ backgroundColor: '#111418' }}>
-      <div className="max-w-5xl mx-auto">
-        <div
-          className="relative rounded-3xl p-16 text-center overflow-hidden border"
-          style={{
-            backgroundColor: '#1A1F24',
-            borderColor: '#2A2F35',
-          }}
-        >
-          {/* Grid pattern */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              backgroundImage: `linear-gradient(rgba(74,222,128,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(74,222,128,0.04) 1px, transparent 1px)`,
-              backgroundSize: '40px 40px',
-            }}
-          />
-          {/* Glow */}
-          <div
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-64 pointer-events-none"
-            style={{
-              background: 'radial-gradient(ellipse at center top, rgba(74,222,128,0.12) 0%, transparent 70%)',
-            }}
-          />
+    <section style={{ padding: '80px 24px 100px' }}>
+      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+        <div style={{
+          borderRadius: 24,
+          background: `linear-gradient(135deg, rgba(20,83,45,0.6) 0%, rgba(22,101,52,0.3) 50%, rgba(15,23,42,0.9) 100%)`,
+          border: '1px solid rgba(16,185,129,0.22)',
+          padding: '64px 48px',
+          textAlign: 'center',
+          position: 'relative',
+          overflow: 'hidden',
+          boxShadow: '0 0 80px rgba(16,185,129,0.08)',
+        }}>
+          {/* Grid bg */}
+          <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(16,185,129,0.04) 1px,transparent 1px), linear-gradient(90deg, rgba(16,185,129,0.04) 1px,transparent 1px)', backgroundSize: '36px 36px', pointerEvents: 'none' }} />
+          {/* Glow orb */}
+          <div style={{ position: 'absolute', top: -80, left: '50%', transform: 'translateX(-50%)', width: 500, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-          <div className="relative z-10">
-            {/* Terminal badge */}
-            <div className="flex justify-center mb-6">
-              <div
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-mono"
-                style={{
-                  backgroundColor: 'rgba(74,222,128,0.08)',
-                  borderColor: 'rgba(74,222,128,0.25)',
-                  color: '#4ADE80',
-                }}
-              >
-                <Terminal className="w-3.5 h-3.5" />
-                <span>$ devflow start --free</span>
-              </div>
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 24 }}>
+              <Terminal size={14} color={E.light} />
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: E.light }}>
+                devflow.init() → ready
+              </span>
             </div>
 
-            <h2
-              className="tracking-tight mb-5"
-              style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 700, color: '#FFFFFF', lineHeight: 1.2 }}
-            >
-              Start building your library
+            <h2 style={{ fontSize: 'clamp(28px, 4.5vw, 52px)', fontWeight: 900, color: '#F0FDF4', letterSpacing: '-0.04em', marginBottom: 18, lineHeight: 1.1 }}>
+              Start your flow state today
             </h2>
-            <p className="max-w-xl mx-auto mb-10" style={{ color: '#9AA4B2' }}>
-              Join thousands of developers organizing their knowledge with DevFlow. 
-              Spend less time searching, more time building.
+            <p style={{ color: '#64748B', fontSize: 17, lineHeight: 1.7, maxWidth: 500, margin: '0 auto 36px', }}>
+              Join 12,000+ developers who've reclaimed their focus and doubled their output with DevFlow.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/signup">
-                <button
-                  className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-sm transition-all hover:opacity-90 hover:scale-[1.02]"
-                  style={{
-                    background: 'linear-gradient(135deg, #4ADE80, #22C55E)',
-                    color: '#111418',
-                    fontWeight: 700,
-                    boxShadow: '0 0 30px rgba(74,222,128,0.3)',
-                  }}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, flexWrap: 'wrap' }}>
+              <Link to="/signup" style={{ textDecoration: 'none' }}>
+                <button style={{
+                  padding: '14px 32px', borderRadius: 12,
+                  background: `linear-gradient(135deg, ${E.mid}, ${E.bright})`,
+                  color: '#F0FDF4', fontSize: 15, fontWeight: 700,
+                  border: 'none', cursor: 'pointer',
+                  boxShadow: `0 0 32px rgba(16,185,129,0.3)`,
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  transition: 'opacity 200ms',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.86')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
                 >
-                  Get Started for Free
-                  <ArrowRight className="w-4 h-4" />
+                  Get started — it's free
+                  <ArrowRight size={15} />
                 </button>
               </Link>
-              <button
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-sm border transition-all hover:opacity-80"
-                style={{
-                  backgroundColor: 'transparent',
-                  borderColor: '#2A2F35',
-                  color: '#9AA4B2',
-                }}
-              >
-                Contact Sales
-              </button>
+              <p style={{ color: '#334155', fontSize: 13 }}>No credit card required · Free forever</p>
             </div>
-
-            <p className="text-xs mt-6" style={{ color: '#9AA4B2' }}>
-              No credit card required · Free 14-day trial · Cancel anytime
-            </p>
           </div>
         </div>
       </div>

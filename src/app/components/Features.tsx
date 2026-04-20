@@ -1,138 +1,179 @@
-import { Upload, Code2, Library, ArrowUpRight, Search, Shield, Zap } from 'lucide-react';
+import { Brain, Zap, GitBranch, Terminal, TrendingUp, Shield } from 'lucide-react';
+import { useState } from 'react';
+
+const E = { bright: '#10B981', light: '#34D399', mid: '#166534', dark: '#14532D' };
 
 const features = [
   {
-    icon: Upload,
-    title: 'Upload Notes',
-    description:
-      'Quickly save code snippets, documentation, and technical notes. Tag, organize, and find everything instantly.',
-    tag: 'Organize',
-    accent: '#4ADE80',
-  },
-  {
-    icon: Code2,
-    title: 'Coding Problems',
-    description:
-      'Track algorithms, interview questions, and solutions. Build your problem-solving arsenal with detailed explanations.',
-    tag: 'Practice',
-    accent: '#60A5FA',
-  },
-  {
-    icon: Library,
-    title: 'Developer Library',
-    description:
-      'Create your personal reference library. Access best practices, patterns, and resources whenever you need them.',
-    tag: 'Reference',
-    accent: '#A78BFA',
-  },
-  {
-    icon: Search,
-    title: 'Smart Search',
-    description:
-      'Full-text search across all your content. Find exactly what you need with intelligent filtering and sorting.',
-    tag: 'Discovery',
-    accent: '#F97316',
-  },
-  {
-    icon: Shield,
-    title: 'Private & Secure',
-    description:
-      'End-to-end encrypted storage. Your intellectual property stays yours — always private, always protected.',
-    tag: 'Security',
-    accent: '#34D399',
+    icon: Brain,
+    title: 'AI Focus Assistant',
+    desc: 'Smart task decomposition, distraction blocking, and real-time coaching that learns your workflow patterns.',
+    tag: 'AI-Powered',
+    stats: '8min avg. time-to-flow',
   },
   {
     icon: Zap,
-    title: 'Instant Access',
-    description:
-      'Lightning-fast retrieval with global CDN. Access your library from anywhere, on any device, at any time.',
-    tag: 'Performance',
-    accent: '#FBBF24',
+    title: 'Deep Work Sessions',
+    desc: 'Pomodoro, flow state timers, and energy-aware scheduling that adapts to your peak productivity windows.',
+    tag: 'Focus',
+    stats: '3.4× more focused hours',
+  },
+  {
+    icon: GitBranch,
+    title: 'Coding Arena',
+    desc: '1,500+ curated challenges ranked by real-world relevance. Practice the patterns that actually get used in production.',
+    tag: 'Practice',
+    stats: '1,500+ challenges',
+  },
+  {
+    icon: Terminal,
+    title: 'Career Roadmaps',
+    desc: 'AI-generated learning paths tailored to your target role, skill gaps, and preferred learning style.',
+    tag: 'Career AI',
+    stats: '94% interview pass rate',
+  },
+  {
+    icon: TrendingUp,
+    title: 'Skill Analytics',
+    desc: 'Detailed gap analysis comparing your skills against job requirements, with weekly improvement reports.',
+    tag: 'Analytics',
+    stats: 'Weekly gap reports',
+  },
+  {
+    icon: Shield,
+    title: 'Knowledge Vault',
+    desc: 'Store and instantly retrieve your notes, docs, and code snippets with AI-powered semantic search.',
+    tag: 'Knowledge',
+    stats: '< 200ms search',
   },
 ];
 
+const testimonials = [
+  { name: 'Alex Chen', role: 'Senior SWE @ Google', text: 'DevFlow doubled my daily output. The focus sessions alone are worth 10x the price.', avatar: 'A' },
+  { name: 'Priya Sharma', role: 'Staff Engineer @ Stripe', text: 'The career roadmap was scary accurate. Got promoted 4 months after following it.', avatar: 'P' },
+  { name: 'Marcus Liu', role: 'Founder @ YC W25', text: "We shipped our MVP in 3 weeks. DevFlow's coding arena prepped our whole team.", avatar: 'M' },
+];
+
 export function Features() {
+  const [hovered, setHovered] = useState<number | null>(null);
+
   return (
-    <section id="features" className="py-28 px-6" style={{ backgroundColor: '#111418' }}>
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <p className="text-sm mb-4 tracking-widest uppercase" style={{ color: '#4ADE80' }}>
-            Platform Features
-          </p>
-          <h2
-            className="tracking-tight mb-4"
-            style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 700, color: '#FFFFFF', lineHeight: 1.2 }}
-          >
-            Everything you need
-          </h2>
-          <p className="max-w-xl mx-auto" style={{ color: '#9AA4B2' }}>
-            Powerful features designed for developers who take their craft seriously.
-          </p>
-        </div>
+    <>
+      {/* Features */}
+      <section style={{ padding: '100px 24px', position: 'relative' }}>
+        <div style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'linear-gradient(180deg, transparent 0%, rgba(14,28,22,0.4) 50%, transparent 100%)',
+        }} />
+        <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+          {/* Header */}
+          <div style={{ textAlign: 'center', marginBottom: 64 }}>
+            <span style={{ display: 'inline-block', padding: '5px 16px', borderRadius: 99, background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', fontSize: 12, color: E.light, fontWeight: 700, letterSpacing: '0.08em', marginBottom: 18 }}>
+              FEATURES
+            </span>
+            <h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 900, color: '#F0FDF4', letterSpacing: '-0.03em', marginBottom: 16 }}>
+              Everything you need to<br />
+              <span style={{ background: `linear-gradient(135deg, ${E.bright}, ${E.light})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                reach your peak
+              </span>
+            </h2>
+            <p style={{ color: '#64748B', fontSize: 17, maxWidth: 560, margin: '0 auto', lineHeight: 1.7 }}>
+              Built by developers, for developers. Every feature is designed to remove friction and maximize your coding output.
+            </p>
+          </div>
 
-        {/* Feature Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {features.map((feature) => (
-            <div
-              key={feature.title}
-              className="group relative rounded-2xl p-7 border transition-all duration-300 cursor-pointer overflow-hidden"
-              style={{
-                backgroundColor: '#1A1F24',
-                borderColor: '#2A2F35',
-              }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLDivElement).style.borderColor = feature.accent + '55';
-                (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)';
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLDivElement).style.borderColor = '#2A2F35';
-                (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)';
-              }}
-            >
-              {/* Subtle glow on hover */}
+          {/* Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }} className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {features.map((f, i) => (
               <div
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                key={f.title}
+                onMouseEnter={() => setHovered(i)}
+                onMouseLeave={() => setHovered(null)}
                 style={{
-                  background: `radial-gradient(ellipse at top left, ${feature.accent}0A 0%, transparent 60%)`,
+                  padding: '28px 26px',
+                  borderRadius: 16,
+                  background: hovered === i
+                    ? 'linear-gradient(145deg, rgba(20,83,45,0.3), rgba(15,23,42,0.95))'
+                    : 'rgba(15,23,42,0.6)',
+                  border: hovered === i ? '1px solid rgba(16,185,129,0.3)' : '1px solid rgba(16,185,129,0.08)',
+                  transition: 'all 250ms ease',
+                  cursor: 'default',
+                  transform: hovered === i ? 'translateY(-3px)' : 'none',
+                  boxShadow: hovered === i ? '0 20px 60px rgba(0,0,0,0.3)' : 'none',
+                  position: 'relative', overflow: 'hidden',
                 }}
-              />
+              >
+                {/* Glow */}
+                {hovered === i && (
+                  <div style={{ position: 'absolute', top: -30, right: -30, width: 120, height: 120, borderRadius: '50%', background: 'radial-gradient(circle, rgba(16,185,129,0.15) 0%, transparent 70%)', pointerEvents: 'none' }} />
+                )}
 
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-5">
-                  <div
-                    className="w-11 h-11 rounded-xl flex items-center justify-center"
-                    style={{ backgroundColor: feature.accent + '18' }}
-                  >
-                    <feature.icon className="w-5 h-5" style={{ color: feature.accent }} strokeWidth={2} />
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 18 }}>
+                  <div style={{
+                    width: 44, height: 44, borderRadius: 12,
+                    background: hovered === i ? 'rgba(16,185,129,0.15)' : 'rgba(16,185,129,0.08)',
+                    border: `1px solid rgba(16,185,129,${hovered === i ? '0.3' : '0.12'})`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    transition: 'all 250ms ease',
+                  }}>
+                    <f.icon size={20} color={hovered === i ? E.light : E.bright} strokeWidth={1.75} />
                   </div>
-                  <span
-                    className="text-xs font-mono uppercase tracking-widest px-2.5 py-1 rounded-full"
-                    style={{ color: feature.accent, backgroundColor: feature.accent + '15' }}
-                  >
-                    {feature.tag}
+                  <span style={{ fontSize: 10, color: E.bright, fontWeight: 700, letterSpacing: '0.08em', padding: '3px 9px', borderRadius: 99, background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.15)' }}>
+                    {f.tag}
                   </span>
                 </div>
 
-                <h3 className="mb-2.5" style={{ color: '#FFFFFF', fontWeight: 600 }}>
-                  {feature.title}
-                </h3>
-                <p className="text-sm leading-relaxed mb-5" style={{ color: '#9AA4B2' }}>
-                  {feature.description}
-                </p>
-
-                <div
-                  className="inline-flex items-center gap-1 text-sm transition-all group-hover:gap-2"
-                  style={{ color: feature.accent }}
-                >
-                  <span>Learn more</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
+                <h3 style={{ color: '#F0FDF4', fontWeight: 700, fontSize: 17, marginBottom: 10, letterSpacing: '-0.01em' }}>{f.title}</h3>
+                <p style={{ color: '#64748B', fontSize: 14, lineHeight: 1.7, marginBottom: 18 }}>{f.desc}</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div style={{ width: 5, height: 5, borderRadius: '50%', background: E.light }} />
+                  <span style={{ fontSize: 12, color: E.light, fontWeight: 600 }}>{f.stats}</span>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Testimonials */}
+      <section style={{ padding: '80px 24px 100px', position: 'relative' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 52 }}>
+            <h2 style={{ fontSize: 'clamp(24px, 3.5vw, 42px)', fontWeight: 900, color: '#F0FDF4', letterSpacing: '-0.03em', marginBottom: 12 }}>
+              Loved by engineering teams
+            </h2>
+            <p style={{ color: '#64748B', fontSize: 16 }}>Real results from real developers</p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }} className="grid-cols-1 md:grid-cols-3">
+            {testimonials.map((t, i) => (
+              <div key={t.name} style={{
+                padding: '28px',
+                borderRadius: 16,
+                background: 'rgba(15,23,42,0.7)',
+                border: '1px solid rgba(16,185,129,0.1)',
+                position: 'relative',
+              }}>
+                <div style={{ fontSize: 36, color: 'rgba(16,185,129,0.2)', fontFamily: 'Georgia, serif', lineHeight: 1, marginBottom: 16 }}>"</div>
+                <p style={{ color: '#CBD5E1', fontSize: 14, lineHeight: 1.8, marginBottom: 24, fontStyle: 'italic' }}>{t.text}</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{
+                    width: 40, height: 40, borderRadius: '50%',
+                    background: `linear-gradient(135deg, ${E.dark}, ${E.bright})`,
+                    color: '#0F172A', fontWeight: 800, fontSize: 15,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0, boxShadow: `0 0 12px rgba(16,185,129,0.25)`,
+                  }}>{t.avatar}</div>
+                  <div>
+                    <p style={{ color: '#F0FDF4', fontWeight: 700, fontSize: 14 }}>{t.name}</p>
+                    <p style={{ color: '#475569', fontSize: 12, marginTop: 2 }}>{t.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
   );
 }
